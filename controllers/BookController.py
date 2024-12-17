@@ -2,8 +2,9 @@ from flask import jsonify, request
 from models.BookModel import Book
 from models.CategoryModel import Category
 from config import db
+from flask_jwt_extended import jwt_required
 
-
+# @jwt_required()
 def get_all_books():
     books = Book.query.all()
     books_with_categories = []
@@ -21,7 +22,7 @@ def get_all_books():
 
     return jsonify(books_with_categories)
 
-
+@jwt_required()
 def get_book_by_id(book_id):
     book = Book.query.get(book_id)
     if not book:
@@ -38,7 +39,7 @@ def get_book_by_id(book_id):
 
     return jsonify(book_data)
 
-
+@jwt_required()
 def add_book():
     new_book_data = request.get_json()
     new_book = Book(
@@ -55,7 +56,7 @@ def add_book():
         201,
     )
 
-
+@jwt_required()
 def update_book(book_id):
     book = Book.query.get(book_id)
     if not book:
@@ -70,7 +71,7 @@ def update_book(book_id):
     db.session.commit()
     return jsonify({"message": "Book updated successfully", "book": book.to_dict()})
 
-
+@jwt_required()
 def patch_book(book_id):
     book = Book.query.get(book_id)
     if not book:
@@ -93,7 +94,7 @@ def patch_book(book_id):
     db.session.commit()
     return jsonify({"message": "Book patched successfully", "book": book.to_dict()})
 
-
+@jwt_required()
 def delete_book(book_id):
     book = Book.query.get(book_id)
     if not book:

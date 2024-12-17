@@ -2,9 +2,10 @@ from flask import jsonify, request
 from models.UserModel import User
 from models.LevelModel import Level
 from config import db
-from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.security import generate_password_hash
+from flask_jwt_extended import jwt_required
 
-
+@jwt_required()
 def get_all_users():
     users = User.query.all()
     users_with_levels = []
@@ -24,6 +25,7 @@ def get_all_users():
     return jsonify(users_with_levels)
 
 
+@jwt_required()
 def get_user_by_id(user_id):
     user = User.query.get(user_id)
     if not user:
@@ -41,7 +43,7 @@ def get_user_by_id(user_id):
 
     return jsonify(user_data)
 
-
+@jwt_required()
 def add_user():
     new_user_data = request.get_json()
     hashed_password = generate_password_hash(new_user_data["password"])
@@ -68,7 +70,7 @@ def add_user():
         201,
     )
 
-
+@jwt_required()
 def update_user(user_id):
     user = User.query.get(user_id)
     if not user:
@@ -87,7 +89,7 @@ def update_user(user_id):
 
     return jsonify({"message": "User updated successfully", "user": user.to_dict()})
 
-
+@jwt_required()
 def patch_user(user_id):
     user = User.query.get(user_id)
     if not user:
@@ -115,7 +117,7 @@ def patch_user(user_id):
 
     return jsonify({"message": "User patched successfully", "user": user.to_dict()})
 
-
+@jwt_required()
 def delete_user(user_id):
     user = User.query.get(user_id)
     if not user:
